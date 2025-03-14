@@ -1,6 +1,6 @@
 # Free Connector for Looker Studio and Facebook Page Stat
 
-A free Community Connector for Looker Studio that allows you to retrieve and analyze post statistics from selected Facebook pages.
+A free for all users Community Connector for Looker Studio that allows you to retrieve and analyze post statistics from selected Facebook pages.
 
 ## Table of Contents
 
