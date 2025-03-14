@@ -1,0 +1,22 @@
+{
+  "timeZone": "Europe/Warsaw",
+  "dependencies": {
+    "enabledAdvancedServices": []
+  },
+  "dataStudio": {
+    "name": "Facebook Page Stats Connector",
+    "logoUrl": "https://www.facebook.com/favicon.ico",
+    "company": "Facebook Page Connector",
+    "companyUrl": "https://developers.facebook.com/",
+    "addonUrl": "https://github.com/user/facebook-looker-connector",
+    "supportUrl": "https://github.com/user/facebook-looker-connector/issues",
+    "description": "Pobiera statystyki postów z określonej strony na Facebooku",
+    "sources": ["FACEBOOK"]
+  },
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/userinfo.profile"
+  ],
+  "runtimeVersion": "V8"
+}
