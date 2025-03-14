@@ -1,96 +1,96 @@
-# Facebook Page Stats Connector dla Looker Studio
+# Facebook Page Stats Connector for Looker Studio
 
-Community Connector dla Looker Studio umożliwiający pobieranie i analizowanie statystyk postów z wybranych stron na Facebooku.
+A Community Connector for Looker Studio that allows you to retrieve and analyze post statistics from selected Facebook pages.
 
-## Spis treści
+## Table of Contents
 
-- [Wprowadzenie](#wprowadzenie)
-- [Funkcjonalności](#funkcjonalności)
-- [Wymagania wstępne](#wymagania-wstępne)
-- [Instalacja](#instalacja)
-  - [Utworzenie aplikacji Facebook](#utworzenie-aplikacji-facebook)
-  - [Konfiguracja Apps Script](#konfiguracja-apps-script)
-  - [Wdrożenie connectora](#wdrożenie-connectora)
-- [Konfiguracja w Looker Studio](#konfiguracja-w-looker-studio)
-- [Rozwiązywanie problemów](#rozwiązywanie-problemów)
-- [Struktura projektu](#struktura-projektu)
-- [Funkcje API](#funkcje-api)
-- [Licencja](#licencja)
+- [Introduction](#introduction)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+  - [Creating a Facebook App](#creating-a-facebook-app)
+  - [Apps Script Configuration](#apps-script-configuration)
+  - [Deploying the Connector](#deploying-the-connector)
+- [Configuration in Looker Studio](#configuration-in-looker-studio)
+- [Troubleshooting](#troubleshooting)
+- [Project Structure](#project-structure)
+- [API Functions](#api-functions)
+- [License](#license)
 
-## Wprowadzenie
+## Introduction
 
-Facebook Page Stats Connector pozwala użytkownikom Looker Studio na pobieranie i wizualizację danych statystycznych dotyczących postów z wybranych stron na Facebooku. Za pomocą tego narzędzia można analizować:
-- Statystyki zaangażowania użytkowników
-- Dane o reakcjach
-- Zasięg i wyświetlenia postów
-- Oraz inne metryki dostępne przez Facebook Graph API
+Facebook Page Stats Connector allows Looker Studio users to retrieve and visualize statistical data about posts from selected Facebook pages. With this tool, you can analyze:
+- User engagement statistics
+- Reaction data
+- Post reach and impressions
+- And other metrics available through Facebook Graph API
 
-## Funkcjonalności
+## Features
 
-- Uwierzytelnianie przez OAuth 2.0 z Facebook API
-- Wybór strony Facebook do analizy
-- Określenie zakresu dat dla danych
-- Wybór rodzaju statystyk do analizy
-- Pobieranie metryk takich jak polubienia, komentarze, udostępnienia, zasięg itp.
-- Pełna integracja z interfejsem Looker Studio
+- OAuth 2.0 authentication with Facebook API
+- Selection of Facebook pages for analysis
+- Date range specification for data
+- Selection of statistics types for analysis
+- Retrieval of metrics such as likes, comments, shares, reach, etc.
+- Full integration with Looker Studio interface
 
-## Wymagania wstępne
+## Prerequisites
 
-- Konto Google (do utworzenia Apps Script)
-- Konto na Facebooku z dostępem do Facebook Developers
-- Uprawnienia administratora do co najmniej jednej strony na Facebooku
-- Dostęp do Looker Studio (dawniej Google Data Studio)
+- Google Account (for creating Apps Script)
+- Facebook account with access to Facebook Developers
+- Admin permissions for at least one Facebook page
+- Access to Looker Studio (formerly Google Data Studio)
 
-## Instalacja
+## Installation
 
-### Utworzenie aplikacji Facebook
+### Creating a Facebook App
 
-1. **Zarejestruj się jako deweloper:**
-   - Przejdź do [Facebook Developers](https://developers.facebook.com/)
-   - Zaloguj się na swoje konto Facebook
-   - Jeśli nie masz jeszcze konta deweloperskiego, zarejestruj się
+1. **Register as a developer:**
+   - Go to [Facebook Developers](https://developers.facebook.com/)
+   - Log in to your Facebook account
+   - If you don't have a developer account yet, sign up
 
-2. **Utwórz nową aplikację:**
-   - Kliknij "Moje aplikacje" w prawym górnym rogu
-   - Wybierz "Utwórz aplikację"
-   - Wybierz typ aplikacji (zalecany: "Witryna" lub "Firma")
-   - Wprowadź nazwę aplikacji (np. "Mój Looker Studio Connector")
-   - Podaj swój adres e-mail dla kontaktu
-   - Kliknij "Utwórz aplikację"
+2. **Create a new application:**
+   - Click "My Apps" in the top right corner
+   - Select "Create App"
+   - Choose app type (recommended: "Website" or "Business")
+   - Enter app name (e.g., "My Looker Studio Connector")
+   - Provide your email address for contact
+   - Click "Create App"
 
-3. **Skonfiguruj Facebook Login:**
-   - W panelu aplikacji przejdź do sekcji "Dodaj produkty"
-   - Znajdź i kliknij "Facebook Login" i wybierz "Skonfiguruj"
-   - W ustawieniach Facebook Login:
-     - W polu "Ważne adresy URL" dodaj:
-       - Adres URL przekierowania OAuth: `https://script.google.com/macros/d/{TWÓJ_ID_DEPLOYMENTU}/usercallback`
-       (Uwaga: ID deploymentu będzie dostępny po wdrożeniu Apps Script - tymczasowo możesz dodać `https://script.google.com`)
-     - Zapisz zmiany
+3. **Configure Facebook Login:**
+   - In the app panel, go to "Add Products" section
+   - Find and click "Facebook Login" and select "Set Up"
+   - In Facebook Login settings:
+     - In the "Valid OAuth Redirect URIs" field, add:
+       - OAuth redirect URL: `https://script.google.com/macros/d/{YOUR_DEPLOYMENT_ID}/usercallback`
+       (Note: Deployment ID will be available after deploying Apps Script - temporarily you can add `https://script.google.com`)
+     - Save changes
 
-4. **Skonfiguruj uprawnienia:**
-   - W menu po lewej stronie kliknij "Przegląd aplikacji" 
-   - Przejdź do sekcji "Uprawnienia i funkcje aplikacji"
-   - Dodaj następujące uprawnienia:
+4. **Configure permissions:**
+   - In the left menu, click "App Review" 
+   - Go to "Permissions and features" section
+   - Add the following permissions:
      - `pages_read_engagement`
      - `pages_show_list`
      - `pages_read_user_content`
-   - Dla każdego uprawnienia podaj uzasadnienie (np. "Do pobierania danych statystycznych o postach na stronach Facebook do analizy w Looker Studio")
+   - Provide justification for each permission (e.g., "To retrieve statistical data about posts on Facebook pages for analysis in Looker Studio")
 
-5. **Pobierz CLIENT_ID i CLIENT_SECRET:**
-   - W menu po lewej stronie kliknij "Ustawienia" i wybierz "Podstawowe"
-   - Zapisz:
-     - Identyfikator aplikacji (App ID) - to będzie Twój CLIENT_ID
-     - Klucz tajny aplikacji (App Secret) - to będzie Twój CLIENT_SECRET
+5. **Get CLIENT_ID and CLIENT_SECRET:**
+   - In the left menu, click "Settings" and select "Basic"
+   - Save:
+     - App ID - this will be your CLIENT_ID
+     - App Secret - this will be your CLIENT_SECRET
 
-### Konfiguracja Apps Script
+### Apps Script Configuration
 
-1. **Utwórz nowy projekt Apps Script:**
-   - Przejdź do [Google Apps Script](https://script.google.com/)
-   - Kliknij "Nowy projekt"
-   - Nadaj projektowi nazwę (np. "Facebook Page Stats Connector")
+1. **Create a new Apps Script project:**
+   - Go to [Google Apps Script](https://script.google.com/)
+   - Click "New Project"
+   - Give the project a name (e.g., "Facebook Page Stats Connector")
 
-2. **Dodaj pliki do projektu:**
-   - Skopiuj i wklej wszystkie pliki z tego repozytorium do swojego projektu Apps Script:
+2. **Add files to the project:**
+   - Copy and paste all files from this repository to your Apps Script project:
      - `appsscript.json`
      - `main.js`
      - `auth.js`
@@ -98,128 +98,128 @@ Facebook Page Stats Connector pozwala użytkownikom Looker Studio na pobieranie 
      - `util.js`
      - `callback.html`
 
-3. **Zaktualizuj dane uwierzytelniania:**
-   - Otwórz plik `auth.js`
-   - Zastąp wartości placeholderów rzeczywistymi danymi z Twojej aplikacji Facebook:
+3. **Update authentication data:**
+   - Open the `auth.js` file
+   - Replace placeholder values with actual data from your Facebook app:
    ```javascript
-   var CLIENT_ID = 'TWÓJ_IDENTYFIKATOR_APLIKACJI';
-   var CLIENT_SECRET = 'TWÓJ_KLUCZ_TAJNY_APLIKACJI';
+   var CLIENT_ID = 'YOUR_APP_ID';
+   var CLIENT_SECRET = 'YOUR_APP_SECRET';
    ```
 
-4. **Dodaj bibliotekę OAuth2:**
-   - W środowisku Apps Script kliknij na "+" obok "Biblioteki" w panelu bocznym
-   - Wprowadź ID biblioteki: `1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF`
-   - Kliknij "Wyszukaj"
-   - Wybierz najnowszą wersję
-   - Kliknij "Dodaj"
+4. **Add OAuth2 library:**
+   - In the Apps Script environment, click "+" next to "Libraries" in the sidebar
+   - Enter library ID: `1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF`
+   - Click "Look up"
+   - Choose the latest version
+   - Click "Add"
 
-### Wdrożenie connectora
+### Deploying the Connector
 
-1. **Przygotuj do wdrożenia:**
-   - W środowisku Apps Script kliknij "Wdróż" > "Nowe wdrożenie"
-   - Wybierz typ: "Community Connector"
-   - Dodaj opis wdrożenia (np. "Pierwsza wersja")
-   - Kliknij "Wdróż"
+1. **Prepare for deployment:**
+   - In the Apps Script environment, click "Deploy" > "New deployment"
+   - Select type: "Community Connector"
+   - Add a deployment description (e.g., "First version")
+   - Click "Deploy"
 
-2. **Pobierz ID deploymentu:**
-   - Po wdrożeniu zobaczysz ID deploymentu w formacie `AKfycbXXXXXXXXXXXXXXXXXXX`
-   - Zapisz ten ID
+2. **Get deployment ID:**
+   - After deployment, you will see a deployment ID in the format `AKfycbXXXXXXXXXXXXXXXXXXX`
+   - Save this ID
 
-3. **Zaktualizuj adres URL przekierowania w aplikacji Facebook:**
-   - Wróć do ustawień Facebook Login w swojej aplikacji Facebook
-   - Zaktualizuj adres URL przekierowania na:
-     `https://script.google.com/macros/d/{TWÓJ_ID_DEPLOYMENTU}/usercallback`
-   - Zastąp `{TWÓJ_ID_DEPLOYMENTU}` ID, który właśnie otrzymałeś
+3. **Update the redirect URL in your Facebook app:**
+   - Return to Facebook Login settings in your Facebook app
+   - Update the redirect URL to:
+     `https://script.google.com/macros/d/{YOUR_DEPLOYMENT_ID}/usercallback`
+   - Replace `{YOUR_DEPLOYMENT_ID}` with the ID you just received
 
-4. **Opublikuj connector (opcjonalnie):**
-   - Aby udostępnić connector innym użytkownikom, musisz przesłać aplikację Facebook do weryfikacji
-   - W panelu aplikacji Facebook przejdź do "Przegląd aplikacji"
-   - Kliknij przycisk "Prześlij do weryfikacji"
-   - Wypełnij wymagane informacje i prześlij formularz
+4. **Publish the connector (optional):**
+   - To share the connector with other users, you need to submit your Facebook app for review
+   - In the Facebook app panel, go to "App Review"
+   - Click the "Submit for Review" button
+   - Fill in the required information and submit the form
 
-## Konfiguracja w Looker Studio
+## Configuration in Looker Studio
 
-1. **Dodaj connector do Looker Studio:**
-   - Przejdź do [Looker Studio](https://lookerstudio.google.com/)
-   - Utwórz nowy raport
-   - Kliknij "Dodaj dane"
-   - W zakładce "Społecznościowe oprogramowanie sprzęgające" znajdź swój connector
-     (Uwaga: Jeśli nie opublikowałeś connectora, będzie on widoczny tylko dla Ciebie)
+1. **Add the connector to Looker Studio:**
+   - Go to [Looker Studio](https://lookerstudio.google.com/)
+   - Create a new report
+   - Click "Add data"
+   - In the "Community Connectors" tab, find your connector
+     (Note: If you haven't published the connector, it will only be visible to you)
 
-2. **Autoryzacja z Facebookiem:**
-   - Kliknij swój connector
-   - Zostaniesz poproszony o zalogowanie się do Facebooka i udzielenie zgód
-   - Autoryzuj aplikację
+2. **Authentication with Facebook:**
+   - Click on your connector
+   - You will be asked to log in to Facebook and grant permissions
+   - Authorize the application
 
-3. **Konfiguracja connectora:**
-   - Po autoryzacji wprowadź:
-     - Identyfikator strony na Facebooku (możesz go znaleźć w adresie URL strony)
-     - Wybierz typ statystyk (podstawowe, zaangażowanie, reakcje)
-     - Określ zakres dat
-   - Kliknij "Połącz"
+3. **Connector configuration:**
+   - After authorization, enter:
+     - Facebook page ID (you can find it in the page URL)
+     - Select the type of statistics (basic, engagement, reactions)
+     - Specify the date range
+   - Click "Connect"
 
-4. **Tworzenie raportu:**
-   - Po połączeniu z danymi możesz rozpocząć tworzenie wizualizacji
-   - Dostępne metryki:
-     - ID Posta
-     - Data Publikacji
-     - Typ Posta
-     - Treść Posta
-     - Polubienia
-     - Komentarze
-     - Udostępnienia
-     - Zasięg
-     - Wyświetlenia
-     - Zaangażowanie
+4. **Creating a report:**
+   - After connecting to the data, you can start creating visualizations
+   - Available metrics:
+     - Post ID
+     - Publication Date
+     - Post Type
+     - Post Content
+     - Likes
+     - Comments
+     - Shares
+     - Reach
+     - Impressions
+     - Engagement
 
-## Rozwiązywanie problemów
+## Troubleshooting
 
-### Problem z uwierzytelnianiem
-- Sprawdź, czy URL przekierowania w aplikacji Facebook jest poprawny
-- Upewnij się, że aplikacja Facebook ma poprawnie skonfigurowane uprawnienia
-- Sprawdź, czy CLIENT_ID i CLIENT_SECRET są poprawnie wprowadzone w pliku `auth.js`
+### Authentication Problems
+- Check if the redirect URL in the Facebook app is correct
+- Make sure the Facebook app has correctly configured permissions
+- Check if the CLIENT_ID and CLIENT_SECRET are correctly entered in the `auth.js` file
 
-### Brak danych
-- Upewnij się, że masz uprawnienia administratora do podanej strony Facebook
-- Sprawdź, czy identyfikator strony jest poprawny
-- Weryfikuj, czy wybrana strona ma posty w określonym zakresie dat
+### No Data
+- Make sure you have admin permissions for the specified Facebook page
+- Check if the page ID is correct
+- Verify if the selected page has posts in the specified date range
 
-### Limity API
-- Facebook API ma limity częstotliwości zapytań
-- Jeśli masz dużą liczbę postów, możesz napotkać limity
-- Rozważ implementację buforowania lub paginacji
+### API Limits
+- Facebook API has request frequency limits
+- If you have a large number of posts, you may encounter limits
+- Consider implementing caching or pagination
 
-## Struktura projektu
+## Project Structure
 
-- **appsscript.json** - Plik manifestu projektu
-- **main.js** - Główny plik zawierający podstawowe funkcje wymagane przez Looker Studio
-- **auth.js** - Kod obsługujący uwierzytelnianie OAuth 2.0 z Facebook API
-- **data.js** - Logika pobierania danych z Facebook API
-- **util.js** - Funkcje pomocnicze
-- **callback.html** - Szablon HTML wyświetlany po autoryzacji OAuth
+- **appsscript.json** - Project manifest file
+- **main.js** - Main file containing basic functions required by Looker Studio
+- **auth.js** - Code handling OAuth 2.0 authentication with Facebook API
+- **data.js** - Logic for retrieving data from Facebook API
+- **util.js** - Helper functions
+- **callback.html** - HTML template displayed after OAuth authorization
 
-## Funkcje API
+## API Functions
 
 ### Facebook Graph API
 
-Ten connector korzysta z następujących endpointów Facebook Graph API:
+This connector uses the following Facebook Graph API endpoints:
 
-1. **Posty strony**
+1. **Page posts**
    - Endpoint: `GET /{page-id}/posts`
-   - Dokumentacja: [Facebook Graph API - Posts](https://developers.facebook.com/docs/graph-api/reference/page/posts/)
+   - Documentation: [Facebook Graph API - Posts](https://developers.facebook.com/docs/graph-api/reference/page/posts/)
 
-2. **Statystyki postów**
+2. **Post insights**
    - Endpoint: `GET /{post-id}/insights`
-   - Dokumentacja: [Facebook Graph API - Post Insights](https://developers.facebook.com/docs/graph-api/reference/post/insights/)
+   - Documentation: [Facebook Graph API - Post Insights](https://developers.facebook.com/docs/graph-api/reference/post/insights/)
 
-3. **Strony użytkownika**
+3. **User pages**
    - Endpoint: `GET /me/accounts`
-   - Dokumentacja: [Facebook Graph API - User Accounts](https://developers.facebook.com/docs/graph-api/reference/user/accounts/)
+   - Documentation: [Facebook Graph API - User Accounts](https://developers.facebook.com/docs/graph-api/reference/user/accounts/)
 
-## Licencja
+## License
 
-Ten projekt jest udostępniany na licencji MIT. Zobacz plik LICENSE, aby uzyskać więcej informacji.
+This project is distributed under the MIT License. See the LICENSE file for more information.
 
 ---
 
-Stworzony z ❤️ dla społeczności Looker Studio
+Created with ❤️ for the Looker Studio community
